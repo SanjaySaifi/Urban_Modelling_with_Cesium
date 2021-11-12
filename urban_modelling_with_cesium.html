@@ -1,0 +1,205 @@
+<html>
+  <head><head>
+    <body>
+<style>
+      @import url(../templates/bucket.css);
+    </style>
+
+<div id="cesiumContainer" class="fullSize"></div>
+    <div id="loadingOverlay">
+      
+    </div>
+<div id="toolbar">
+  <h2>Highlight Buildings</h2>
+    <div id="list1" class="dropdown-check-list" tabindex="100">
+        <span class="anchor"></span>
+        <ul class="items">
+          
+          
+          <!--ADDED HTML 
+            
+
+            <li><input type="checkbox"  value="0"/>Residential </li>
+            <li><input type="checkbox" />Commercial </li>
+            <li><input type="checkbox" />Yes </li>
+            <li><input type="checkbox" />Office </li>
+
+            -->
+          
+          
+        </ul>
+    
+    </div>
+      </div>
+      <script>
+        var viewer = new Cesium.Viewer("cesiumContainer", {
+  terrainProvider: Cesium.createWorldTerrain(),
+});
+
+var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+// Add Cesium OSM buildings to the scene as our example 3D Tileset.
+var osmBuildingsTileset = Cesium.createOsmBuildings();
+viewer.scene.primitives.add(osmBuildingsTileset);
+
+// Set the initial camera to look at Seattle
+viewer.scene.camera.setView({
+  destination: Cesium.Cartesian3.fromDegrees(-122.3472, 47.598, 370),
+  orientation: {
+    heading: Cesium.Math.toRadians(10),
+    pitch: Cesium.Math.toRadians(-10),
+  },
+});
+
+/////////////////////////
+
+function highlightAllResidentialBuildings() {
+  osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        [
+          "${feature['building']} === 'apartments' ",
+          "color('cyan', 0.9)",
+        ],
+        
+       
+        [true, "color('white')"],
+      ],
+    },
+  });
+}
+
+function highlightAllCommercialBuildings() {
+  osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        [
+          "${feature['building']} === 'commercial' ",
+          "color('lightgreen', 0.9)",
+        ],
+       
+        [true, "color('white')"],
+      ],
+    },
+  });
+}
+
+function highlightAllYesBuildings() {
+  osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        [
+          "${feature['building']} === 'yes' ",
+          "color('yellow', 0.9)",
+        ],
+       
+        [true, "color('white')"],
+      ],
+    },
+  });
+}
+
+function highlightAllofficeBuildings() {
+  osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        [
+          "${feature['building']} === 'office' ",
+          "color('red', 0.8)",
+        ],
+       
+        [true, "color('white')"],
+      ],
+    },
+  });
+}
+
+/////////////////////////
+
+Sandcastle.addToolbarButton("Residential Buildings", function () {
+   highlightAllResidentialBuildings('commercial');
+});
+
+
+Sandcastle.addToolbarButton("Commercial Buildings", function () {
+   highlightAllCommercialBuildings() ;
+});
+
+Sandcastle.addToolbarButton("Yes Buildings", function () {
+   highlightAllYesBuildings() ;
+});
+Sandcastle.addToolbarButton("Office Buildings", function () {
+   highlightAllofficeBuildings() ;
+});
+
+//////////////////////////////////////////////////////////////////////////////
+function highlightAllBuildings() {
+  osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+    color: {
+      conditions: [
+        [
+          "${feature['building']} === 'yes' ",
+          "color('yellow', 0.9)",
+        ],
+        [
+          "${feature['building']} === 'commercial' ",
+          "color('lightgreen', 0.9)",
+        ],
+        [
+          "${feature['building']} === 'apartments' ",
+          "color('cyan', 0.9)",
+        ],
+        [
+          "${feature['building']} === 'office' ",
+          "color('red', 0.8)",
+        ],
+       
+       
+        [true, "color('white')"],
+      ],
+    },
+  });
+}
+
+
+
+
+
+
+
+
+Sandcastle.addToolbarButton("All Buildings", function () {
+   highlightAllBuildings() ;
+});
+
+//////////////////////////////////////////////////////////////////////////////
+function showByBuildingType(buildingType) {
+  switch (buildingType) {
+    case "office":
+      osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+        show: "${feature['building']} === 'office'",
+      });
+      break;
+    case "apartments":
+      osmBuildingsTileset.style = new Cesium.Cesium3DTileStyle({
+        show: "${feature['building']} === 'apartments'",
+      });
+      break;
+    default:
+      break;
+  }
+}
+var checkList = document.getElementById('list1');
+checkList.getElementsByClassName('anchor')[0].onclick = function (){
+          
+  
+  showByBuildingType("office");
+};
+
+
+
+
+      </script>
+      
+    </body>
+    </html>
